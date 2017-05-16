@@ -1,0 +1,18 @@
+---
+AllCops:
+  TargetRubyVersion: 2.4.1
+  Exclude:
+    - bin/**/*
+
+Documentation:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*
