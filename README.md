@@ -26,7 +26,7 @@ class class IndexPage < Tram::Page
   param  :account
   option :readonly, optional: true
 
-  url_helper :index_url # Delegate to url_helper
+  url_helper :index_url # Delegate to Rails.application.routes.url_helpers module
 
   section :collection
   section :readonly, method: :readonly_on?
