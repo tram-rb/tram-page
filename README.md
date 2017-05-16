@@ -22,15 +22,19 @@ Or install it yourself as:
 
 ```ruby
 class class IndexPage < Tram::Page
+  # See dry-initializer
   param  :account
-  option :readonly, optional: true  # See dry-initializer
+  option :readonly, optional: true 
 
-  url_helper :index_url             # Delegate to Rails.application.routes.url_helpers module
+  # Delegate to Rails.application.routes.url_helpers module
+  url_helper :index_url
 
   section :collection
   section :readonly, method: :readonly_on?
-  section :index_url                # Usable in section methods
-
+  
+  # Usable in section methods as well
+  section :index_url
+  
   def collection
     # ...
   end
