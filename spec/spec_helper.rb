@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 require "bundler/setup"
+require "dry/initializer"
 require "tram/page"
+require "support/blank_page"
+require "support/example_page"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

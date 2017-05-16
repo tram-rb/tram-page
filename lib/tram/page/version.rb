@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
+# rubocop:disable Style/ClassAndModuleChildren
 module Tram
-  module Page
+  class Page
     VERSION = "0.1.0"
   end
 end

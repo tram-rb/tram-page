@@ -1,11 +1,11 @@
-require "tram/page/version"
+# frozen_string_literal: true
 
-module Tram::Page
-  extend Dry::Initializer::Mixin
-
-  attr_reader :i18n_scope
+class Tram::Page
+  extend ::Dry::Initializer::Mixin
 
   class << self
+    attr_accessor :i18n_scope
+
     def section(name, options = {}, &block)
       @__sections ||= []
       @__sections << [name, options, block]
@@ -19,7 +19,7 @@ module Tram::Page
 
   def to_h(options = {})
     data = page_methods(options).map do |(name, opts, block)|
-      value = instance_eval(&block) if block.present?
+      value = instance_eval(&block) if block
       value ||= public_send(opts[:method] || name)
 
       [name, value]
@@ -36,13 +36,13 @@ module Tram::Page
 
   def page_methods(options)
     methods = self.class.instance_variable_get(:"@__sections") || []
-    except = Array.wrap(options[:except])
-    only = Array.wrap(options[:only])
+    except = Array(options[:except])
+    only = Array(options[:only])
     methods.reject do |(name, _, _)|
-      (except.present? && except.include?(name)) ||
-        (only.present? && !only.include?(name))
+      (except.any? && except.include?(name)) ||
+        (only.any? && !only.include?(name))
     end
   end
 end
 
-Tram::Page.i18n_scope = "pages".freeze
+Tram::Page.i18n_scope = "pages"
