@@ -1,8 +1,6 @@
 # Tram::Page
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/tram/page`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Page Object pattern for Rails apps.
 
 ## Installation
 
@@ -22,7 +20,30 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+class class IndexPage < Tram::Page
+  # See dry-initializer
+  param  :account
+  option :readonly, optional: true
+
+  url_helper :index_url # Delegate to url_helper
+
+  section :collection
+  section :readonly, method: :readonly_on?
+
+  def collection
+    # ...
+  end
+
+  def readonly_on?
+    readonly
+  end
+end
+
+IndexPage.new(Account.find(99)).to_h
+IndexPage.new(Account.find(99)).to_h(except: :collection)
+IndexPage.new(Account.find(99)).to_h(only: :collection)
+```
 
 ## Development
 
@@ -38,4 +59,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
