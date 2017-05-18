@@ -8,7 +8,13 @@ class Tram::Page
 
     def section(name, options = {}, &block)
       @__sections ||= []
-      @__sections << [name, options, block]
+
+      n = name.dup.to_sym
+      if @__sections.map(&:first).include?(n)
+        raise "Section #{n} already exists"
+      end
+
+      @__sections << [n, options, block]
     end
 
     def url_helper(name)
