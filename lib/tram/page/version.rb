@@ -3,6 +3,6 @@
 # rubocop:disable Style/ClassAndModuleChildren
 module Tram
   class Page
-    VERSION = "0.1.0"
+    VERSION = "0.1.1"
   end
 end
