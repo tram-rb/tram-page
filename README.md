@@ -24,17 +24,20 @@ Or install it yourself as:
 class class IndexPage < Tram::Page
   # See dry-initializer
   param  :account
-  option :readonly, optional: true 
+  option :readonly, optional: true
 
   # Delegate to Rails.application.routes.url_helpers module
   url_helper :index_url
 
   section :collection
   section :readonly, method: :readonly_on?
-  
+
+  # IndexPage#title will be defined
+  section :title, value: -> { account.title }
+
   # Usable in section methods as well
   section :index_url
-  
+
   def collection
     # ...
   end
