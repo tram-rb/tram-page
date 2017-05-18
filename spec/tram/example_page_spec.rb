@@ -16,4 +16,8 @@ RSpec.describe ExamplePage do
   it ":only" do
     expect(subject.to_h(only: :foo)).to eq(foo: "test")
   end
+
+  it "defines method for block section" do
+    expect(subject.baz).to eq("test")
+  end
 end

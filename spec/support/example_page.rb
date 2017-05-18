@@ -5,7 +5,7 @@ class ExamplePage < Tram::Page
 
   section :bar
   section :foo, method: :foo_alias
-  section :baz { foo }
+  section :baz, value: -> { foo }
 
   def bar
     foo

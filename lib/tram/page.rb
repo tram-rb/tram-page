@@ -6,28 +6,34 @@ class Tram::Page
   class << self
     attr_accessor :i18n_scope
 
-    def section(name, options = {}, &block)
+    def section(name, options = {})
       @__sections ||= []
 
       n = name.dup.to_sym
       if @__sections.map(&:first).include?(n)
         raise "Section #{n} already exists"
       end
-
-      @__sections << [n, options, block]
+      n = define_section_method(n, options)
+      @__sections << [n, options]
     end
 
     def url_helper(name)
       raise "Rails url_helpers module is not defined" unless defined?(Rails)
       delegate name, to: :"Rails.application.routes.url_helpers"
     end
+
+    private
+
+    def define_section_method(n, options)
+      return n unless options[:value]
+      define_method(n) { instance_exec(&options[:value]) }
+      n
+    end
   end
 
   def to_h(options = {})
-    data = page_methods(options).map do |(name, opts, block)|
-      value = instance_eval(&block) if block
-      value ||= public_send(opts[:method] || name)
-
+    data = page_methods(options).map do |(name, opts)|
+      value = public_send(opts[:method] || name)
       [name, value]
     end
     Hash[data]
