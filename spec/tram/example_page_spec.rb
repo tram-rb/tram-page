@@ -6,11 +6,11 @@ RSpec.describe ExamplePage do
   subject { described_class.new("test") }
 
   it "returns data hash" do
-    expect(subject.to_h).to eq(bar: "test", foo: "test")
+    expect(subject.to_h).to eq(bar: "test", foo: "test", baz: "test")
   end
 
   it ":except" do
-    expect(subject.to_h(except: :bar)).to eq(foo: "test")
+    expect(subject.to_h(except: :bar)).to eq(foo: "test", baz: "test")
   end
 
   it ":only" do
