@@ -9,7 +9,7 @@ class Tram::Page
     def section(name, options = {})
       @__sections ||= []
 
-      n = name.dup.to_sym
+      n = name.to_sym
       if @__sections.map(&:first).include?(n)
         raise "Section #{n} already exists"
       end
