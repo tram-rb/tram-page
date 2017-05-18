@@ -50,7 +50,7 @@ class Tram::Page
     methods = self.class.instance_variable_get(:"@__sections") || []
     except = Array(options[:except])
     only = Array(options[:only])
-    methods.reject do |(name, _, _)|
+    methods.reject do |(name, _)|
       (except.any? && except.include?(name)) ||
         (only.any? && !only.include?(name))
     end
