@@ -43,7 +43,7 @@ class Tram::Page
 
   def t(key)
     raise "I18n is not defined" unless defined?(I18n)
-    I18n.t key, scope: [self.class.i18n_scope, self.class.name.underscore]
+    I18n.t key, scope: [Tram::Page.i18n_scope, self.class.name.underscore]
   end
 
   def page_methods(options)
