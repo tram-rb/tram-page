@@ -13,6 +13,7 @@ class Tram::Page
       if @__sections.map(&:first).include?(n)
         raise "Section #{n} already exists"
       end
+
       n = define_section_method(n, options)
       @__sections << [n, options]
     end
@@ -50,10 +51,17 @@ class Tram::Page
     methods = self.class.instance_variable_get(:"@__sections") || []
     except = Array(options[:except])
     only = Array(options[:only])
-    methods.reject do |(name, _)|
+    methods.reject do |(name, opts)|
       (except.any? && except.include?(name)) ||
-        (only.any? && !only.include?(name))
+        (only.any? && !only.include?(name)) ||
+        __hide?(opts)
     end
+  end
+
+  def __hide?(opts)
+    black, white = opts.values_at(:unless, :if)
+    (black && instance_eval(black.to_s)) ||
+      (white && !instance_eval(white.to_s))
   end
 end
 
