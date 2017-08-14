@@ -17,6 +17,10 @@ RSpec.describe ExamplePage do
     expect(subject.to_h(only: :foo)).to eq(foo: "test")
   end
 
+  it ":if and :unless" do
+    expect(described_class.new(nil).to_h).to eq(foo: nil)
+  end
+
   it "defines method for block section" do
     expect(subject.baz).to eq("test")
   end
