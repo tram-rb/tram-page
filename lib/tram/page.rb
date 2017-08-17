@@ -60,8 +60,7 @@ class Tram::Page
 
   def __hide?(opts)
     black, white = opts.values_at(:unless, :if)
-    (black && instance_eval(black.to_s)) ||
-      (white && !instance_eval(white.to_s))
+    (black && public_send(black)) || (white && !public_send(white))
   end
 end
 

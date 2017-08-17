@@ -5,7 +5,7 @@ class ExamplePage < Tram::Page
 
   section :bar, if: "bar"
   section :foo, method: :foo_alias
-  section :baz, value: -> { foo }, unless: "foo.nil?"
+  section :baz, value: -> { foo }, if: :foo
 
   def bar
     foo
