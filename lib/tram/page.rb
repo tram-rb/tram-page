@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Tram::Page
-  extend ::Dry::Initializer::Mixin
+  extend ::Dry::Initializer
 
   class << self
     attr_accessor :i18n_scope
