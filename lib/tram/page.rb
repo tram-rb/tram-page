@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require "dry-initializer"
+require_relative "page/section"
+
 class Tram::Page
   extend ::Dry::Initializer
 
@@ -14,7 +17,14 @@ class Tram::Page
 
       section = Section.new(name, options)
       sections[name] = section
-      define_method(name, &section.block) if section.block
+      define_method(name, &section.value) if section.value
+    end
+
+    def inherit_section(name, option_overrides={})
+      name = name.to_sym
+      parent_section = superclass.sections[name]
+      options = Tram::Page::Section.dry_initializer.attributes(parent_section)
+      section(name, options.merge(option_overrides))
     end
 
     def url_helper(name)

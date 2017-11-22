@@ -21,7 +21,7 @@ Or install it yourself as:
 ## Usage
 
 ```ruby
-class class IndexPage < Tram::Page
+class IndexPage < Tram::Page
   # See dry-initializer
   param  :account
   option :readonly, optional: true
@@ -50,6 +50,22 @@ end
 IndexPage.new(Account.find(99)).to_h
 IndexPage.new(Account.find(99)).to_h(except: :collection)
 IndexPage.new(Account.find(99)).to_h(only: :collection)
+```
+
+Inheritance of page objects is supported:
+
+```ruby
+class FancyIndexPage < IndexPage
+  inherit_section :title
+  section         :fancy_collection
+  inherit_section :index_url, if: :readonly_on?
+
+  def fancy_collection
+    collection.map(&:fancy)
+  end
+end
+
+FancyIndexPage.new(Account.find(99)).to_h # => { :title => "…", fancy_collection: […] } 
 ```
 
 ## Development
