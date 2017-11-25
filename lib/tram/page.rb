@@ -3,19 +3,18 @@
 class Tram::Page
   extend ::Dry::Initializer
 
+  require_relative "page/section"
+
   class << self
     attr_accessor :i18n_scope
 
     def section(name, options = {})
-      @__sections ||= []
+      name = name.to_sym
+      raise "Section #{name} already exists" if sections.key? name
 
-      n = name.to_sym
-      if @__sections.map(&:first).include?(n)
-        raise "Section #{n} already exists"
-      end
-
-      n = define_section_method(n, options)
-      @__sections << [n, options]
+      section = Section.new(name, options)
+      sections[name] = section
+      define_method(name, &section.block) if section.block
     end
 
     def url_helper(name)
@@ -23,21 +22,16 @@ class Tram::Page
       delegate name, to: :"Rails.application.routes.url_helpers"
     end
 
-    private
-
-    def define_section_method(n, options)
-      return n unless options[:value]
-      define_method(n) { instance_exec(&options[:value]) }
-      n
+    def sections
+      @sections ||= {}
     end
   end
 
-  def to_h(options = {})
-    data = page_methods(options).map do |(name, opts)|
-      value = public_send(opts[:method] || name)
-      [name, value]
-    end
-    Hash[data]
+  def to_h(except: nil, only: nil, **)
+    obj = self.class.sections.values.map { |s| s.call(self) }.reduce({}, :merge)
+    obj = obj.reject { |k, _| Array(except).map(&:to_sym).include? k } if except
+    obj = obj.select { |k, _| Array(only).map(&:to_sym).include? k }   if only
+    obj
   end
 
   private
@@ -47,21 +41,5 @@ class Tram::Page
     I18n.t key, scope: [Tram::Page.i18n_scope, self.class.name.underscore]
   end
 
-  def page_methods(options)
-    methods = self.class.instance_variable_get(:"@__sections") || []
-    except = Array(options[:except])
-    only = Array(options[:only])
-    methods.reject do |(name, opts)|
-      (except.any? && except.include?(name)) ||
-        (only.any? && !only.include?(name)) ||
-        __hide?(opts)
-    end
-  end
-
-  def __hide?(opts)
-    black, white = opts.values_at(:unless, :if)
-    (black && public_send(black)) || (white && !public_send(white))
-  end
+  self.i18n_scope = "pages"
 end
-
-Tram::Page.i18n_scope = "pages"
