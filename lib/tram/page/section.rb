@@ -9,11 +9,10 @@ class Tram::Page
   class Section
     extend Dry::Initializer
     param  :name,   proc(&:to_sym)
-    option :method, proc(&:to_s),    default: -> { name }, as: :method_name
-    option :value,  proc(&:to_proc), optional: true,       as: :block
-    option :if,     proc(&:to_s),    optional: true,       as: :positive
-    option :unless, proc(&:to_s),    optional: true,       as: :negative
-    option :skip,   true.method(:&), optional: true
+    option :method, proc(&:to_s),    default: -> { name }
+    option :value,  proc(&:to_proc), optional: true
+    option :if,     proc(&:to_s),    optional: true
+    option :unless, proc(&:to_s),    optional: true
 
     # @param  [Tram::Page] page
     # @return [Hash] a part of the section
@@ -24,13 +23,20 @@ class Tram::Page
     private
 
     def skip_on?(page)
-      return true if skip
-      return true if positive && !page.public_send(positive)
-      return true if negative &&  page.public_send(negative)
+      return true if attributes[:if]     && !page.__send__(attributes[:if])
+      return true if attributes[:unless] &&  page.__send__(attributes[:unless])
     end
 
     def value_at(page)
-      block ? page.instance_exec(&block) : page.public_send(method_name)
+      if attributes[:value]
+        page.instance_exec(&attributes[:value])
+      else
+        page.public_send(attributes[:method])
+      end
+    end
+
+    def attributes
+      @attributes ||= self.class.dry_initializer.attributes(self)
     end
   end
 end
