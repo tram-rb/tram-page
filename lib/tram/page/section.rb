@@ -2,6 +2,7 @@
 
 class Tram::Page
   #
+  # @private
   # Contains class-level definition (name and options) for a section
   # with a method [#call] that extracts the section part of hash
   # from an instance of [Tram::Page]
@@ -9,11 +10,9 @@ class Tram::Page
   class Section
     extend Dry::Initializer
     param  :name,   proc(&:to_sym)
-    option :method, proc(&:to_s),    default: -> { name }, as: :method_name
-    option :value,  proc(&:to_proc), optional: true,       as: :block
-    option :if,     proc(&:to_s),    optional: true,       as: :positive
-    option :unless, proc(&:to_s),    optional: true,       as: :negative
-    option :skip,   true.method(:&), optional: true
+    option :method, proc(&:to_s), default: -> { name }, as: :source
+    option :if,     proc(&:to_s), optional: true,       as: :positive
+    option :unless, proc(&:to_s), optional: true,       as: :negative
 
     # @param  [Tram::Page] page
     # @return [Hash] a part of the section
@@ -24,13 +23,12 @@ class Tram::Page
     private
 
     def skip_on?(page)
-      return true if skip
       return true if positive && !page.public_send(positive)
       return true if negative &&  page.public_send(negative)
     end
 
     def value_at(page)
-      block ? page.instance_exec(&block) : page.public_send(method_name)
+      page.public_send(source)
     end
   end
 end
