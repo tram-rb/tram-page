@@ -9,12 +9,12 @@ class Tram::Page
     attr_accessor :i18n_scope
 
     # Defines a section of the page as a reference to its public method,
-    # and creates/reloads the method if necessary.
+    # and creates/overloads the method if necessary.
     #
     # @param  [#to_sym] name The name of the **section**
     #
-    # @option [Boolean] :reload
-    #   If this definition can reload a previous one
+    # @option [Boolean] :overload
+    #   If this definition can overload a previous one
     # @option [Proc] :value (nil)
     #   A new content of the referred method
     # @option options [#to_sym] :method (name)
@@ -26,9 +26,9 @@ class Tram::Page
     #
     # @return [self] itself
     #
-    def section(name, reload: false, value: nil, **options)
+    def section(name, overload: false, value: nil, **options)
       name = name.to_sym
-      raise "Section :#{name} already exists" if !reload && sections.key?(name)
+      raise "Section #{name} already exists" if !overload && sections.key?(name)
 
       section = Section.new(name, options)
       define_method(section.source, &value) if value
