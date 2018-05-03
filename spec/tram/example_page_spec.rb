@@ -24,4 +24,10 @@ RSpec.describe ExamplePage do
   it "defines method for block section" do
     expect(subject.baz).to eq("test")
   end
+
+  it "computes only required fields" do
+    allow(subject).to receive(:foo_alias)
+    subject.to_h(only: :bar)
+    expect(subject).not_to have_received(:foo_alias)
+  end
 end

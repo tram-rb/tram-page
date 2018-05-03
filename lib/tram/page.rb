@@ -59,10 +59,10 @@ class Tram::Page
   end
 
   def to_h(except: nil, only: nil, **)
-    obj = self.class.sections.values.map { |s| s.call(self) }.reduce({}, :merge)
-    obj = obj.reject { |k, _| Array(except).map(&:to_sym).include? k } if except
-    obj = obj.select { |k, _| Array(only).map(&:to_sym).include? k }   if only
-    obj
+    sections = self.class.sections.dup
+    sections.select! { |k, _| Array(only).include? k }   if only
+    sections.reject! { |k, _| Array(except).include? k } if except
+    sections.map { |_, section| section.call(self) }.reduce({}, :merge!)
   end
 
   private
